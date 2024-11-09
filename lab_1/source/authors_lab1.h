@@ -1,7 +1,7 @@
 #pragma once
 
-#define AUTHORS_TWO_A "Lukas Rothenberger"
-#define AUTHORS_TWO_B ""
+#define AUTHORS_TWO_A "Philip Seitz"
+#define AUTHORS_TWO_B "Philip Seitz"
 #define AUTHORS_TWO_C ""
 #define AUTHORS_TWO_D ""
 #define AUTHORS_TWO_E ""
