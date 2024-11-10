@@ -4,8 +4,8 @@
 #define AUTHORS_TWO_B "Philip Seitz"
 #define AUTHORS_TWO_C ""
 #define AUTHORS_TWO_D ""
-#define AUTHORS_TWO_E ""
-#define AUTHORS_TWO_F ""
+#define AUTHORS_TWO_E "Bora Büyükbas"
+#define AUTHORS_TWO_F "Bora Büyükbas"
 
 #define AUTHORS_THREE_A ""
 #define AUTHORS_THREE_B ""
