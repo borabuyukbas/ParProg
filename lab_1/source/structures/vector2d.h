@@ -1,5 +1,7 @@
 #pragma once
 
+#include <exception>
+
 template <typename _Ty>
 class Vector2d
 {
