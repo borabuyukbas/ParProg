@@ -2,8 +2,8 @@
 
 #define AUTHORS_TWO_A "Philip Seitz"
 #define AUTHORS_TWO_B "Philip Seitz"
-#define AUTHORS_TWO_C ""
-#define AUTHORS_TWO_D ""
+#define AUTHORS_TWO_C "Fares Elkholy"
+#define AUTHORS_TWO_D "Fares Elkholy"
 #define AUTHORS_TWO_E "Bora Büyükbas"
 #define AUTHORS_TWO_F "Bora Büyükbas"
 

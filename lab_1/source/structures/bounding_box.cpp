@@ -44,3 +44,25 @@ BoundingBox BoundingBox::get_scaled(std::uint32_t scaling_factor){
 
     return BoundingBox(x_middle - x_size*scaling_factor, x_middle + x_size*scaling_factor, y_middle - y_size*scaling_factor, y_middle + y_size*scaling_factor);
 }
+
+bool BoundingBox::contains(Vector2d<double> point){
+    return (point[0] >= x_min && point[0] <= x_max && point[1] >= y_min && point[1] <= y_max);
+}
+
+BoundingBox BoundingBox::get_quadrant(std::uint8_t index){
+    double x_center = (x_min + x_max) / 2;
+    double y_center = (y_min + y_max) / 2;
+
+    switch(index) {
+        case 0:
+            return BoundingBox(x_min, x_center, y_center, y_max);
+        case 1:
+            return BoundingBox(x_center, x_max, y_center, y_max);
+        case 2:
+            return BoundingBox(x_min, x_center, y_min, y_center);
+        case 3:
+            return BoundingBox(x_center, x_max, y_min, y_center);
+        default:
+            throw std::exception{};
+    }
+}   
