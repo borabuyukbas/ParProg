@@ -38,15 +38,15 @@ public:
 	}
 
 
-	Vector2d<_Ty> operator*(Vector2d vec)
+	Vector2d<_Ty> operator*(_Ty scalar)
 	{
-		return Vector2d<_Ty>(this->m_x * vec.m_x, this->m_y * vec.m_y);
+		return Vector2d<_Ty>(this->m_x * scalar, this->m_y * scalar);
 	}
 
 
-	Vector2d<_Ty> operator/(Vector2d vec)
+	Vector2d<_Ty> operator/(_Ty scalar)
 	{
-		return Vector2d<_Ty>(this->m_x / vec.m_x, this->m_y / vec.m_y);
+		return Vector2d<_Ty>(this->m_x / scalar, this->m_y / scalar);
 	}
 
 
@@ -58,8 +58,8 @@ public:
 
 	void set(_Ty p_x, _Ty p_y)
 	{
-		this[0] = p_x;
-		this[1] = p_y;
+		this->m_x = p_x;
+		this->m_y = p_y;
 	}
 
 private:
