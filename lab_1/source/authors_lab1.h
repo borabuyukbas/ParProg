@@ -7,7 +7,7 @@
 #define AUTHORS_TWO_E "Bora Büyükbas"
 #define AUTHORS_TWO_F "Bora Büyükbas"
 
-#define AUTHORS_THREE_A ""
+#define AUTHORS_THREE_A "Bora Büyükbas"
 #define AUTHORS_THREE_B ""
 #define AUTHORS_THREE_C ""
 
