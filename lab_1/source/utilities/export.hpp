@@ -4,14 +4,14 @@
 #include <filesystem>
 #include <fstream>
 
-static void save_universe(std::filesystem::path load_universe_path,
+static void save_universe(std::filesystem::path save_universe_path,
                           Universe &universe) {
 
-  std::ofstream universe_file(load_universe_path);
+  std::ofstream universe_file(save_universe_path);
   std::string line;
 
   if (!universe_file.is_open()) {
-    throw std::invalid_argument("Could not load universe from given file!");
+    throw std::invalid_argument("Could not save universe to given path!");
   }
 
   universe_file << "### Bodies" << std::endl;
