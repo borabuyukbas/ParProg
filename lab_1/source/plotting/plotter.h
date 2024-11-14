@@ -10,7 +10,13 @@
 
 class Plotter{
 public:
-    Plotter(BoundingBox bb, const std::filesystem::path & arg_output_folder_path, std::uint32_t plot_width_arg, std::uint32_t plot_height_arg): plot_bounding_box(bb), output_folder_path(arg_output_folder_path), plot_width(plot_width_arg), plot_height(plot_height_arg), image(BitmapImage(plot_height_arg, plot_width_arg)), image_serial_number(0){
+    Plotter(BoundingBox bb, const std::filesystem::path & arg_output_folder_path, std::uint32_t plot_width_arg, std::uint32_t plot_height_arg) :
+        plot_bounding_box(bb), 
+        output_folder_path(arg_output_folder_path),
+        plot_width(plot_width_arg),
+        plot_height(plot_height_arg),
+        image(BitmapImage(plot_height_arg, plot_width_arg)),
+        image_serial_number(0){
         // set default filename prefix
         filename_prefix = "plot";
     }
@@ -32,8 +38,24 @@ public:
         filename_prefix = prefix;
     }
 
-    void mark_position(Vector2d<double> position, std::uint8_t red, std::uint8_t green, std::uint8_t blue);
-    void mark_pixel(std::uint32_t x, std::uint32_t y, std::uint8_t red, std::uint8_t green, std::uint8_t blue);
+    void mark_position(Vector2d<double> position, std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
+        if (!plot_bounding_box.contains(position)) return;
+
+        // calculate pixel coordinates using relative width/height
+        std::uint32_t x = ((position[0] - plot_bounding_box.x_min) / (plot_bounding_box.x_max - plot_bounding_box.x_min)) * plot_width;
+        std::uint32_t y = ((position[1] - plot_bounding_box.y_min) / (plot_bounding_box.y_max - plot_bounding_box.y_min)) * plot_height;
+        BitmapImage::BitmapPixel pixel(red, green, blue);
+
+        image.set_pixel(y, x, pixel);
+    }
+    void mark_pixel(std::uint32_t x, std::uint32_t y, std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
+        // exception handling
+        if (x >= plot_width || y >= plot_height) {
+            throw std::out_of_range("Pixel's position is outside the image bounds!");
+    }
+        BitmapImage::BitmapPixel pixel(red, green, blue);
+        image.set_pixel(y, x, pixel);
+    }
 
     BitmapImage::BitmapPixel get_pixel(std::uint32_t x, std::uint32_t y);
 
