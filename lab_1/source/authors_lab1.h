@@ -8,8 +8,8 @@
 #define AUTHORS_TWO_F "Bora Büyükbas"
 
 #define AUTHORS_THREE_A "Bora Büyükbas"
-#define AUTHORS_THREE_B ""
-#define AUTHORS_THREE_C ""
+#define AUTHORS_THREE_B "Fares Elkholy"
+#define AUTHORS_THREE_C "Fares Elkholy"
 
 #define AUTHORS_FOUR_A ""
 #define AUTHORS_FOUR_B ""
