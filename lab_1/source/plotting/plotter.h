@@ -42,8 +42,8 @@ public:
         if (!plot_bounding_box.contains(position)) return;
 
         // calculate pixel coordinates using relative width/height
-        std::uint32_t x = ((position[0] - plot_bounding_box.x_min) / (plot_bounding_box.x_max - plot_bounding_box.x_min)) * plot_width;
-        std::uint32_t y = ((position[1] - plot_bounding_box.y_min) / (plot_bounding_box.y_max - plot_bounding_box.y_min)) * plot_height;
+        std::uint32_t x = ((position[0] - plot_bounding_box.x_min) / (plot_bounding_box.x_max - plot_bounding_box.x_min)) * (image.get_width() - 1);
+        std::uint32_t y = ((position[1] - plot_bounding_box.y_min) / (plot_bounding_box.y_max - plot_bounding_box.y_min)) * (image.get_height() - 1);
         BitmapImage::BitmapPixel pixel(red, green, blue);
 
         image.set_pixel(y, x, pixel);

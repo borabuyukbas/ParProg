@@ -38,8 +38,8 @@ void Plotter::highlight_position(Vector2d<double> position, std::uint8_t red, st
         double universe_height = y_max - y_min;
 
         // from universe to image space
-        double x_pixel = (position[0] - x_min) / universe_width * (image.get_width() - 1);
-        double y_pixel = (position[1] - y_min) / universe_height * (image.get_height() - 1);
+        double x_pixel = (position[0] - x_min) / universe_width * (image_width - 1);
+        double y_pixel = (position[1] - y_min) / universe_height * (image_height - 1);
 
         // draw horizontal line
         for (int i = 0; i < image_width; i++)
