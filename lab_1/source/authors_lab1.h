@@ -14,7 +14,7 @@
 #define AUTHORS_FOUR_A "Bora Büyükbas"
 #define AUTHORS_FOUR_B "Bora Büyükbas"
 
-#define AUTHORS_FIVE_A ""
+#define AUTHORS_FIVE_A "Philip Seitz"
 #define AUTHORS_FIVE_B ""
 #define AUTHORS_FIVE_C ""
 #define AUTHORS_FIVE_D ""
