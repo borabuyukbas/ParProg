@@ -21,23 +21,36 @@ BitmapImage::BitmapPixel Plotter::get_pixel(std::uint32_t x, std::uint32_t y){
 }
 
 void Plotter::highlight_position(Vector2d<double> position, std::uint8_t red, std::uint8_t green, std::uint8_t blue){
-    // 
-    if (!plot_bounding_box.contains(position)) return;
+    // check for bounding box range
+    if (plot_bounding_box.contains(position))
+    {
+        // // fill in cross across entire image
+        uint32_t image_width = image.get_width();
+        uint32_t image_height = image.get_height();
+       
+        double x_min = plot_bounding_box.x_min;
+        double x_max = plot_bounding_box.x_max;
+        
+        double y_min = plot_bounding_box.y_min;
+        double y_max = plot_bounding_box.y_max;
 
-    // calculate pixel coordinates using relative width/height
-    std::uint32_t x = ((position[0] - plot_bounding_box.x_min) / (plot_bounding_box.x_max - plot_bounding_box.x_min)) * plot_width;
-    std::uint32_t y = ((position[1] - plot_bounding_box.y_min) / (plot_bounding_box.y_max - plot_bounding_box.y_min)) * plot_height;
-    
-    BitmapImage::BitmapPixel pixel(red, green, blue);
+        double universe_width = x_max - x_min;
+        double universe_height = y_max - y_min;
 
-    //
-    std::int32_t cross_width = 5;
+        // from universe to image space
+        double x_pixel = (position[0] - x_min) / universe_width * (image.get_width() - 1);
+        double y_pixel = (position[1] - y_min) / universe_height * (image.get_height() - 1);
 
-    // draw cross
-    for (int i = -cross_width; i <= cross_width; i++) {
-        // set pixel on horizontal line
-        image.set_pixel(y, x + i, pixel);
-        // set pixel on vertical line
-        image.set_pixel(y + i, x, pixel);
+        // draw horizontal line
+        for (int i = 0; i < image_width; i++)
+        {
+            mark_pixel(i, y_pixel, red, green, blue);
+        }
+
+        // draw vertical line
+        for (int i = 0; i < image_height; i++)
+        {
+            mark_pixel(x_pixel, i, red, green, blue);
+        }
     }
 }
