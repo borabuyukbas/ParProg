@@ -6,7 +6,7 @@
 template <typename T>
 static Vector2d<T> calculate_acceleration(Vector2d<T> F, double m) {
   if (m == 0) {
-    std::invalid_argument("Die Masse m darf nicht null sein.");
+    throw std::invalid_argument("Die Masse m darf nicht null sein.");
   }
 
   return F / m;
