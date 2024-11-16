@@ -1,4 +1,5 @@
 #include "structures/bounding_box.h"
+#include <cstdint>
 #include <math.h>
 #include <stdexcept>
 
