@@ -2,6 +2,7 @@
 
 #include "structures/universe.h"
 #include <filesystem>
+#include <format>
 #include <fstream>
 
 static void save_universe(std::filesystem::path save_universe_path,
@@ -19,25 +20,25 @@ static void save_universe(std::filesystem::path save_universe_path,
 
   universe_file << "### Positions" << std::endl;
   for (Vector2d<double> position : universe.positions) {
-    universe_file << std::to_string(position[0]) << " "
-                  << std::to_string(position[1]) << std::endl;
+    universe_file << std::format("{:.6f}", position[0]) << " "
+                  << std::format("{:.6f}", position[1]) << std::endl;
   }
 
   universe_file << "### Weights" << std::endl;
   for (double weight : universe.weights) {
-    universe_file << std::to_string(weight) << std::endl;
+    universe_file << std::format("{:.6f}", weight) << std::endl;
   }
 
   universe_file << "### Velocities" << std::endl;
   for (Vector2d<double> velocity : universe.velocities) {
-    universe_file << std::to_string(velocity[0]) << " "
-                  << std::to_string(velocity[1]) << std::endl;
+    universe_file << std::format("{:.6f}", velocity[0]) << " "
+                  << std::format("{:.6f}", velocity[1]) << std::endl;
   }
 
   universe_file << "### Forces" << std::endl;
   for (Vector2d<double> force : universe.forces) {
-    universe_file << std::to_string(force[0]) << " " << std::to_string(force[1])
-                  << std::endl;
+    universe_file << std::format("{:.6f}", force[0]) << " "
+                  << std::format("{:.6f}", force[1]) << std::endl;
   }
 
   universe_file.close();
