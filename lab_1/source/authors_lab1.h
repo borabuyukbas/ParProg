@@ -11,8 +11,8 @@
 #define AUTHORS_THREE_B "Fares Elkholy"
 #define AUTHORS_THREE_C "Fares Elkholy"
 
-#define AUTHORS_FOUR_A ""
-#define AUTHORS_FOUR_B ""
+#define AUTHORS_FOUR_A "Bora Büyükbas"
+#define AUTHORS_FOUR_B "Bora Büyükbas"
 
 #define AUTHORS_FIVE_A ""
 #define AUTHORS_FIVE_B ""
