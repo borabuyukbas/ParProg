@@ -65,7 +65,6 @@ void NaiveSequentialSimulation::simulate_epoch(
 
   if (create_intermediate_plots &&
       universe.current_simulation_epoch % plot_intermediate_epochs == 0) {
-    // plotter.set_plot_bounding_box(universe.get_bounding_box());
     plotter.add_bodies_to_image(universe);
     plotter.write_and_clear();
   }
