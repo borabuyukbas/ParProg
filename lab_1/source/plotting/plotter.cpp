@@ -20,6 +20,28 @@ BitmapImage::BitmapPixel Plotter::get_pixel(std::uint32_t x, std::uint32_t y){
     return image.get_pixel(y, x);
 }
 
+void Plotter::mark_position(Vector2d<double> position, std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
+    if (!plot_bounding_box.contains(position)) return;
+
+    // calculate pixel coordinates using relative width/height
+    std::uint32_t x = ((position[0] - plot_bounding_box.x_min) / (plot_bounding_box.x_max - plot_bounding_box.x_min)) * (image.get_width() - 1);
+    std::uint32_t y = ((position[1] - plot_bounding_box.y_min) / (plot_bounding_box.y_max - plot_bounding_box.y_min)) * (image.get_height() - 1);
+    BitmapImage::BitmapPixel pixel(red, green, blue);
+
+    image.set_pixel(y, x, pixel);
+}
+
+void Plotter::mark_pixel(std::uint32_t x, std::uint32_t y, std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
+    // exception handling
+    if (x >= plot_width || y >= plot_height) {
+        // std::out_of_range extends std::logic_error, which extends std::exception
+        // according to https://moodle.tu-darmstadt.de/mod/forum/discuss.php?d=296086, it is possible to use specific exception classes
+        throw std::out_of_range("Pixel's position is outside the image bounds!");
+    }
+    BitmapImage::BitmapPixel pixel(red, green, blue);
+    image.set_pixel(y, x, pixel);
+}
+
 void Plotter::highlight_position(Vector2d<double> position, std::uint8_t red, std::uint8_t green, std::uint8_t blue){
     // check for bounding box range
     if (plot_bounding_box.contains(position))
