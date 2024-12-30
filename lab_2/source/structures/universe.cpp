@@ -50,6 +50,39 @@ BoundingBox Universe::get_bounding_box(){
 }
 
 
-BoundingBox Universe::parallel_cpu_get_bounding_box(){
-    return BoundingBox(0.0, 0.0, 0.0, 0.0);
+BoundingBox Universe::parallel_cpu_get_bounding_box() {
+
+    // "shared" variables
+    double x_min = std::numeric_limits<double>::max();
+    double x_max = std::numeric_limits<double>::min();
+    double y_min = std::numeric_limits<double>::max();
+    double y_max = std::numeric_limits<double>::min();
+
+
+
+    // loop parallelism, max and min search via reduction clauses to solve data dependences
+#pragma omp parallel for reduction(min: x_min) reduction(min: y_min) reduction(max: x_max) reduction(max: y_max)
+    
+        for (int i = 0; i < positions.size(); i++) {
+            double pos_x, pos_y;
+            pos_x = positions[i][0];
+            pos_y = positions[i][1];
+
+            if (pos_x > x_max) {
+                x_max = pos_x;
+            }
+            if (pos_x < x_min) {
+                x_min = pos_x;
+            }
+            if (pos_y > y_max) {
+                y_max = pos_y;
+            }
+            if (pos_y < y_min) {
+                y_min = pos_y;
+            }
+
+            
+        }
+
+    return BoundingBox(x_min, x_max, y_min, y_max);
 }
