@@ -71,9 +71,13 @@ std::vector<QuadtreeNode*> Quadtree::construct(Universe& universe, BoundingBox B
         if (size > 0) {
             QuadtreeNode* node = new QuadtreeNode(quadrant);
 
-            // if there is only one body, set the body identifier and stop the recursion
+            // if there is only one body, set the body identifier with the mass values and stop the recursion
             if (size == 1) {
                 node->body_identifier = indices[0];
+                node->cumulative_mass = universe.weights[indices[0]];
+                node->cumulative_mass_ready = true;
+                node->center_of_mass = universe.positions[indices[0]];
+                node->center_of_mass_ready = true;
             }
             // if there are more then one bodies, search for the new children and copy the values back to the node
             else if (size > 1) {
@@ -111,9 +115,13 @@ std::vector<QuadtreeNode*> Quadtree::construct_task(Universe& universe, Bounding
                 if (size > 0) {
                     QuadtreeNode* node = new QuadtreeNode(quadrant);
 
-                    // If there is only one body, set the body identifier
+                    // If there is only one body, set the body identifier with the mass values
                     if (size == 1) {
                         node->body_identifier = indices[0];
+                        node->cumulative_mass = universe.weights[indices[0]];
+                        node->cumulative_mass_ready = true;
+                        node->center_of_mass = universe.positions[indices[0]];
+                        node->center_of_mass_ready = true;
                     }
                     // If there are more than one body, create tasks for the children
                     else {
@@ -162,9 +170,13 @@ std::vector<QuadtreeNode*> Quadtree::construct_task_with_cutoff(Universe& univer
                 if (size > 0) {
                     QuadtreeNode* node = new QuadtreeNode(quadrant);
 
-                    // If there is only one body, set the body identifier
+                    // If there is only one body, set the body identifier with the mass values
                     if (size == 1) {
                         node->body_identifier = indices[0];
+                        node->cumulative_mass = universe.weights[indices[0]];
+                        node->cumulative_mass_ready = true;
+                        node->center_of_mass = universe.positions[indices[0]];
+                        node->center_of_mass_ready = true;
                     }
                     // If there are more than one body, create tasks for the children
                     else {
