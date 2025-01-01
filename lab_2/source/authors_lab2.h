@@ -5,12 +5,12 @@
 #define AUTHORS_TWO_C "Philip Seitz"
 #define AUTHORS_TWO_D "Philip Seitz"
 
-#define AUTHORS_THREE_B ""
-#define AUTHORS_THREE_C ""
-#define AUTHORS_THREE_D ""
-#define AUTHORS_THREE_E ""
-#define AUTHORS_THREE_F ""
-#define AUTHORS_THREE_G ""
+#define AUTHORS_THREE_B "Bora Büyükbas"
+#define AUTHORS_THREE_C "Bora Büyükbas"
+#define AUTHORS_THREE_D "Bora Büyükbas"
+#define AUTHORS_THREE_E "Bora Büyükbas"
+#define AUTHORS_THREE_F "Bora Büyükbas"
+#define AUTHORS_THREE_G "Bora Büyükbas"
 
 #define AUTHORS_FOUR_A ""
 #define AUTHORS_FOUR_B ""

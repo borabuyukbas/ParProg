@@ -8,9 +8,13 @@ double QuadtreeNode::calculate_node_cumulative_mass(){
 }
 
 QuadtreeNode::QuadtreeNode(BoundingBox arg_bounding_box){
+    bounding_box = arg_bounding_box;
 }
 
 QuadtreeNode::~QuadtreeNode(){
+    for (auto c : children) {
+        delete c;
+    }
 }
 
 Vector2d<double> QuadtreeNode::calculate_node_center_of_mass(){
