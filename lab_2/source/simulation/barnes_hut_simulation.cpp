@@ -12,6 +12,29 @@ void BarnesHutSimulation::simulate_epochs(Plotter& plotter, Universe& universe, 
 }
 
 void BarnesHutSimulation::simulate_epoch(Plotter& plotter, Universe& universe, bool create_intermediate_plots, std::uint32_t plot_intermediate_epochs){
+    // create QuadTree representing the current state of the universe
+    BoundingBox this_bb = universe.parallel_cpu_get_bounding_box();
+    Quadtree quadtree(universe, this_bb, int8_t(2));    
+
+    // calculate cumulative masses and centers of mass
+    quadtree.calculate_cumulative_masses();
+    quadtree.calculate_center_of_mass();
+
+    // calculate forces
+    calculate_forces(universe, quadtree);
+
+    // calculate velocities & positions
+    NaiveParallelSimulation::calculate_velocities(universe);
+    NaiveParallelSimulation::calculate_positions(universe);
+
+    universe.current_simulation_epoch += 1;
+    if (create_intermediate_plots &&
+        universe.current_simulation_epoch % plot_intermediate_epochs == 0)
+    {
+        plotter.add_bodies_to_image(universe);
+        plotter.write_and_clear();
+    }
+    
     return;
 }
 
