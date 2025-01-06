@@ -2,7 +2,7 @@
 #include "structures/vector2d.h"
 
 #include <iostream>
-
+#include "structures/universe.h"
 
 double QuadtreeNode::calculate_node_cumulative_mass(){
     // return if cumulative mass is ready
@@ -58,4 +58,24 @@ Vector2d<double> QuadtreeNode::calculate_node_center_of_mass(){
     this->center_of_mass = Vector2d<double>(numerator_x, numerator_y) / this->calculate_node_cumulative_mass();
     this->center_of_mass_ready = true;
     return this->center_of_mass;
+}
+void QuadtreeNode::add_relevant_child(Universe& universe, 
+std::vector<QuadtreeNode*>& relevant_nodes, Vector2d<double>& body_position, 
+std::int32_t body_index, double threshold_theta)
+{
+    double d = this->bounding_box.get_diagonal();
+    Vector2d<double> direction_vector = this->center_of_mass - body_position;
+    double r = sqrt(pow(direction_vector[0], 2) + pow(direction_vector[1], 2));
+    double theta = d / r;
+    // split 
+    if (body_identifier == -1 && ((theta >= threshold_theta)) || (bounding_box.contains(body_position)))
+        for(QuadtreeNode* child : children)
+            {
+                // aufteilen 
+                child ->add_relevant_child(universe, relevant_nodes, 
+                body_position, body_index, threshold_theta);
+            }
+    // add relevant node
+    if (!bounding_box.contains(body_position) && ( (body_identifier != -1 && theta >= threshold_theta) || (theta < threshold_theta)))
+        relevant_nodes.push_back(this);
 }

@@ -39,7 +39,8 @@ void BarnesHutSimulation::simulate_epoch(Plotter& plotter, Universe& universe, b
 }
 
 void BarnesHutSimulation::get_relevant_nodes(Universe& universe, Quadtree& quadtree, std::vector<QuadtreeNode*>& relevant_nodes, Vector2d<double>& body_position, std::int32_t body_index, double threshold_theta){
-    return;
+    // masses will have been set before this 
+   quadtree.root->add_relevant_child(universe, relevant_nodes, body_position, body_index, threshold_theta);
 }
 
 void BarnesHutSimulation::calculate_forces(Universe& universe, Quadtree& quadtree){
