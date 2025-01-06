@@ -3,6 +3,7 @@
 #include <vector>
 #include "structures/vector2d.h"
 #include "structures/bounding_box.h"
+#include "structures/universe.h"
 
 class QuadtreeNode{
 public:
