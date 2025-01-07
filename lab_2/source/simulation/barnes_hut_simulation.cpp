@@ -44,5 +44,28 @@ void BarnesHutSimulation::get_relevant_nodes(Universe& universe, Quadtree& quadt
 }
 
 void BarnesHutSimulation::calculate_forces(Universe& universe, Quadtree& quadtree){
-    return;
+    double threshold_theta = 0.2;
+
+    #pragma omp parallel for
+    for (int i = 0; i < universe.num_bodies; i++)
+    {
+        std::vector<QuadtreeNode*> relevant_nodes;
+        get_relevant_nodes(universe, quadtree, relevant_nodes, 
+        universe.positions[i], i, threshold_theta);
+
+        Vector2d<double> sum_force_vec{0.0, 0.0};
+
+        for (QuadtreeNode* node : relevant_nodes)
+        {
+            Vector2d<double> distant_node_pos = node->center_of_mass;
+            Vector2d<double> body_pos = universe.positions[i];
+            Vector2d<double> direction_vector = distant_node_pos - body_pos;
+            double distance = sqrt(pow(direction_vector[0], 2) + pow(direction_vector[1], 2));
+            double force = gravitational_force(universe.weights[i], node->cumulative_mass, distance);
+
+            Vector2d<double> force_vector = direction_vector * 1/distance * force;
+            sum_force_vec = sum_force_vec + force_vector;
+        }
+        universe.forces[i] = sum_force_vec;
+    }    
 }

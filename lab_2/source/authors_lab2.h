@@ -13,8 +13,8 @@
 #define AUTHORS_THREE_G "Bora Büyükbas"
 
 #define AUTHORS_FOUR_A "Fares Elkholy"
-#define AUTHORS_FOUR_B ""
-#define AUTHORS_FOUR_C ""
+#define AUTHORS_FOUR_B "Fares Elkholy"
+#define AUTHORS_FOUR_C "Philip Seitz"
 
-#define AUTHORS_FIVE_A ""
-#define AUTHORS_FIVE_B ""
+#define AUTHORS_FIVE_A "Fares Elkholy"
+#define AUTHORS_FIVE_B "Fares Elkholy"
