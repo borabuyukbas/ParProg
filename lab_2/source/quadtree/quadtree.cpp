@@ -12,7 +12,7 @@
 #include <omp.h>
 #include <vector>
 
-#define CUTOFF 10
+#define CUTOFF 20000
 
 std::vector<std::int32_t> get_indices(Universe& universe, BoundingBox bounding_box, std::vector<std::int32_t> body_indices) {
     // create a vector that holds incides for current quadrant
