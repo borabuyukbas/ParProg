@@ -45,7 +45,7 @@
 Um einen vernünfitgen Speed up zu erreichen, haben wir zwei parallele Regionen in unserer Methode eingefügt. 
 % Erläutern Sie, welche Teile der Methode Sie als besonders Rechenintensiv ansehen und warum.
 
-Einmal haben wir die verschachtelte for-Schleife (beginnend auf Zeile 57 in \verb|find_collisions()|) parallelisiert. Diese wird dafür verwendet, potenziel kollielierende Paare von Körper zu finden. Für jeden arbeitenden Thread ist dann eine \verb|private_pair_set| vorgesehen, in der die gefundenen Paare gespeichert werden. Am Ende der parallelisierten for-Schleife werden die Ergebnisse der jeweiligen Threads in die \verb|pair_set| zusammengeführt. Wir haben diese for-Schleife parallelisert, da sie bei $10^5$ Körper insgesamt $(10^5)^2 = 10^{10}$ Iterationen durchführt und somit sehr rechenintensiv ist. Wir unten zu sehen ist, ist dieser Teil der Methode tatsächlich das am rechenintensivsten. 
+Einmal haben wir die verschachtelte for-Schleife (beginnend auf Zeile 57 in \verb|find_collisions()|) parallelisiert. Diese wird dafür verwendet, potenziel kollielierende Paare von Körper zu finden. Für jeden arbeitenden Thread ist dann eine \verb|private_pair_set| vorgesehen, in der die gefundenen Paare gespeichert werden. Am Ende der parallelisierten for-Schleife werden die Ergebnisse der jeweiligen Threads in die \verb|pair_set| zusammengeführt. Wir haben diese for-Schleife parallelisert, da sie bei $10^5$ Körper insgesamt $(10^5)^2 = 10^{10}$ Iterationen durchführt und somit sehr rechenintensiv ist. Wie unten zu sehen ist, ist dieser Teil der Methode tatsächlich das am rechenintensivsten. 
 Zuletzt haben wir die für das Löschen der kollidierte Körper zuständige for-Schleife (beginnend auf Zeile 101) parallelisert. Da die Anzahl der Körper, die gelöscht werden müssen, in der Regel deutlich geringer ist als die Anzahl der Körper, die auf Kollisionen überprüft werden müssen, ist dieser Teil der Methode viel weniger rechenintensiv. Dennoch haben wir ihn parallelisiert, um den Speed up zu maximieren. \newline
 
 % Belegen Sie Ihre Vermutungen durch geeignete Messungen
@@ -77,7 +77,7 @@ Um die Rechenintensivität dieser zwei Teile der Methode zu belegen, haben wir d
       \end{axis}
 \end{tikzpicture}
 
-Die Messungen zeigen, dass die Ausführungszeit besonders ab etwa 5.000 Körpern deutlich zunimmt 
+Die Messungen zeigen, dass die Ausführungszeit besonders ab etwa 5.000 Körpern deutlich zunimmt.
 Weil diese zwei Teile der Methode stark von der Anzahl der Körper abhängig sind, zeigen diese Messungen auch, dass mit einer ansteigenden Anzahl von Körper diese Teile der Methode sehr rechenintensiv werden und daher eine Parallelisierung sinnvoll ist.
 
 \section{Effektivität der Parallelisierung durch OpenMP}
@@ -86,7 +86,7 @@ Weil diese zwei Teile der Methode stark von der Anzahl der Körper abhängig sin
 % 1: plot graph of speedup on y-axis and number of bodies on x axis
 
 
-Um die Effektivität der Parallelisierung zu zeigen, haben wir die Laufzeit der Methode für verschiedene Anzahlen von Körpern gemessen, wobei die Methode einmal parallelisiert wurde und einmal nicht. 
+Um die Effektivität der Parallelisierung zu zeigen, haben wir die Laufzeit der beiden Methoden für verschiedene Anzahlen von Körpern gemessen. 
 
 Die folgende Grafik zeigt den jeweiligen Unterschied der Ausführungszeiten der Methode für verschiedene Anzahlen an Körper zwischen $10^2$ bis $10^5$.
 
@@ -146,8 +146,8 @@ Die folgende Grafik zeigt den jeweiligen Unterschied der Ausführungszeiten der 
   \end{axis}
 \end{tikzpicture}
 
-Das Diagramm zeigt, dass zwar die paralleliserte Methode für kleine Anzahlen von Körpern (~ $10^2$ Körper) langsamer ist als die serielle Methode, jedoch für größere Anzahlen von Körpern deutlich schneller ist. Dies ist darauf zurückzuführen, dass die serielle Methode für große Anzahlen von Körpern sehr rechenintensiv ist und die parallelisierte Methode die Rechenlast auf mehrere Threads verteilt.
+Das Diagramm zeigt, dass zwar die paralleliserte Methode für kleine Anzahlen von Körpern (ca. $10^2$ Körper) langsamer ist als die serielle Methode, jedoch für größere Anzahlen von Körpern deutlich schneller ist. Dies ist darauf zurückzuführen, dass die serielle Methode für große Anzahlen von Körpern sehr rechenintensiv ist und die parallelisierte Methode die Rechenlast auf mehrere Threads verteilt.
 
-Zum Beispiel wurde es für eine Körperanzahl von 100000 einen 50x-Speedup der Ausführungszeit der paralleliserten Methode im Vergleich zur serillen erreicht. Damit lässt sich abschließend behaupten, dass die Parallelisierung der Methode (für die meisten Fälle) sehr effektiv ist 
+Zum Beispiel wurde es für eine Körperanzahl von 100000 einen 50x-Speedup der Ausführungszeit der paralleliserten Methode im Vergleich zur serillen erreicht. Damit lässt sich abschließend behaupten, dass die Parallelisierung der Methode (für die meisten Fälle) sehr effektiv ist.
 
 \end{document}
