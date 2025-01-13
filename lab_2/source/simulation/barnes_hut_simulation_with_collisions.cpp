@@ -51,7 +51,7 @@ struct PairComparator {
 
 void BarnesHutSimulationWithCollisions::find_collisions(Universe& universe){
     // set of pairs with custom ordering: pairs which contain the heaviest bodies appear first
-    std::set<std::pair<int, int>, PairComparator> pair_set = std::set<std::pair<int, int>, PairComparator>(PairComparator(&universe));
+    std::set<std::pair<int, int>, PairComparator> pair_set{PairComparator(&universe)};
 
     // insert indizes of colliding pairs into map. after this, themaps
     for (int i = 0; i < universe.num_bodies; i++) 
@@ -111,5 +111,73 @@ void BarnesHutSimulationWithCollisions::find_collisions(Universe& universe){
 }
 
 void BarnesHutSimulationWithCollisions::find_collisions_parallel(Universe& universe){
-    return;
+      // set of pairs with custom ordering: pairs which contain the heaviest bodies appear first
+    std::set<std::pair<int, int>, PairComparator> pair_set{PairComparator(&universe)};
+
+    // Parallelize insertion of indizes of colliding pairs into pair set. After this step, all possible colliding pairs are in the pair set
+    #pragma omp parallel
+    {
+        std::set<std::pair<int, int>, PairComparator> private_pair_set{PairComparator(&universe)};
+
+        #pragma omp for nowait
+        for (int i = 0; i < universe.num_bodies; i++) {
+            for (int k = 0; k < universe.num_bodies; k++) {
+                if (i == k) continue;
+
+                Vector2d<double> direction_vector = universe.positions[i] - universe.positions[k];
+                double distance = sqrt(pow(direction_vector[0], 2) + pow(direction_vector[1], 2));
+                if (distance < 100000000000) {
+                    private_pair_set.emplace(std::make_pair(i, k));
+                }
+            }
+        }
+
+        #pragma omp critical
+        {
+            pair_set.insert(private_pair_set.begin(), private_pair_set.end());
+        }
+    }
+
+    // Ordered set of indizes of bodies that have collided
+    std::set<int> collided_indices;
+
+    // access first (heaviest) element of the set of pairs
+    while (!pair_set.empty()) {
+        // Retrieve the heaviest pair (based on the custom comparator)
+        auto heaviest_pair_it = pair_set.begin();
+        std::pair<int, int> heaviest_pair = *heaviest_pair_it;
+
+        collided_indices.insert(heaviest_pair.second);
+
+        double old_heavy_mass = universe.weights[heaviest_pair.first];
+        double old_light_mass = universe.weights[heaviest_pair.second];
+
+        // update weight & velocity of heavier body (those of lighter body are irrelevant as the lighter body will be removed in the following step)
+        universe.weights[heaviest_pair.first] = old_heavy_mass + universe.weights[heaviest_pair.second];
+        universe.velocities[heaviest_pair.first] = ((universe.velocities[heaviest_pair.second]*old_light_mass) + (universe.velocities[heaviest_pair.first]*old_heavy_mass)) / universe.weights[heaviest_pair.first];
+
+        // Remove the heaviest pair from the set    
+        pair_set.erase(heaviest_pair_it);
+
+        // Remove all pairs where the first element is equal to second_body (since the second body will have already collided)
+        std::erase_if(pair_set, [&](const std::pair<int, int>& p) -> bool {
+            return p.first == heaviest_pair.second;
+        });
+    }
+    
+    // Convert collided set to vector (to facilitate for-loop)
+    std::vector<int> sorted_collided_indices(collided_indices.begin(), collided_indices.end());
+
+    // Parallelize the deletion of collided indices
+    #pragma omp parallel for
+    for (int i = 0; i < static_cast<int>(sorted_collided_indices.size()); i++) {
+        int idx = sorted_collided_indices[i];
+        // update values
+        universe.forces.erase(universe.forces.begin() + idx - i);
+        universe.positions.erase(universe.positions.begin() + idx - i);
+        universe.weights.erase(universe.weights.begin() + idx - i);
+        universe.velocities.erase(universe.velocities.begin() + idx - i);
+        // Decrement no. of bodies in universe
+        universe.num_bodies--;
+    }
 }
