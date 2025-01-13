@@ -20,20 +20,20 @@
 int main(int argc, char** argv) {
 	auto lab_cli_app = CLI::App{ "" };
 
-	auto number_epochs = std::uint32_t{ 400 };
+	auto number_epochs = std::uint32_t{ 100 };
 	auto output_image_width = std::uint32_t{800};
 	auto output_image_height = std::uint32_t{800};
 	//auto output_path = std::filesystem::path{"INVALID"};
-	auto output_path = std::string{"C:/dev/ParProg/lab_2/scratch"};
+	auto output_path = std::string{"INVALID"};
 	auto save_universe_path = std::filesystem::path{"./universe.txt"};
 	auto load_universe_path = std::filesystem::path{"./NOTHING_TO_LOAD"};
 	bool output_intermediate_states = bool{true};
 	bool save_initial_universe = bool{true};
-	auto num_bodies = std::uint32_t{1000};
+	auto num_bodies = std::uint32_t{100};
 	auto plot_intermediate_epochs = std::uint32_t{5};
 	auto plot_bounding_box_scale = std::uint32_t{5};
 	auto universe_generator = std::uint32_t{ 0 };
-	auto simulation_mode = std::uint32_t{3};
+	auto simulation_mode = std::uint32_t{0};
 
 	lab_cli_app.add_option("--output-image-width", output_image_width, "default: 800px");
 	lab_cli_app.add_option("--output-image-height", output_image_height, "default: 800px");
