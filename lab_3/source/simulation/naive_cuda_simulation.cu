@@ -5,6 +5,16 @@
 #include <cuda_runtime_api.h>
 #include "cuda_wrappers.cuh"
 
+std::vector<double2> vector_map_vector2d_to_double2(const std::vector<Vector2d<double>> vector) {
+    std::vector<double2> returnVector (vector.size());
+
+    for (size_t i = 0; i < vector.size(); ++i) {
+        returnVector[i] = double2{vector[i][0], vector[i][1]};
+    }
+
+    return returnVector;
+}
+
 void NaiveCudaSimulation::allocate_device_memory(Universe& universe, void** d_weights, void** d_forces, void** d_velocities, void** d_positions){
 
 }
@@ -14,7 +24,10 @@ void NaiveCudaSimulation::free_device_memory(void** d_weights, void** d_forces, 
 }
 
 void NaiveCudaSimulation::copy_data_to_device(Universe& universe, void* d_weights, void* d_forces, void* d_velocities, void* d_positions){
-
+    parprog_cudaMemcpy(d_weights, universe.weights.data(), universe.num_bodies * sizeof(double), cudaMemcpyHostToDevice);
+    parprog_cudaMemcpy(d_forces, vector_map_vector2d_to_double2(universe.forces).data(), universe.num_bodies * sizeof(double2), cudaMemcpyHostToDevice);
+    parprog_cudaMemcpy(d_velocities, vector_map_vector2d_to_double2(universe.velocities).data(), universe.num_bodies * sizeof(double2), cudaMemcpyHostToDevice);
+    parprog_cudaMemcpy(d_positions, vector_map_vector2d_to_double2(universe.positions).data(), universe.num_bodies * sizeof(double2), cudaMemcpyHostToDevice);
 }
 
 void NaiveCudaSimulation::copy_data_from_device(Universe& universe, void* d_weights, void* d_forces, void* d_velocities, void* d_positions){
