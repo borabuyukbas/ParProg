@@ -86,7 +86,12 @@ void calculate_forces_kernel(std::uint32_t num_bodies, double2* d_positions, dou
 }
 
 void NaiveCudaSimulation::calculate_forces(Universe& universe, void* d_positions, void* d_weights, void* d_forces){
+    int block_size = 512;
+    int grid_size = universe.num_bodies % block_size == 0 ? universe.num_bodies / block_size : (universe.num_bodies - (universe.num_bodies % block_size) + block_size) / block_size;
     
+    dim3 block_dim(block_size);
+    dim3 grid_dim(grid_size);
+    calculate_forces_kernel<<<grid_dim, block_dim>>>(universe.num_bodies, (double2*) d_positions, (double*) d_weights, (double2*) d_forces);;
 }
 
 __global__
