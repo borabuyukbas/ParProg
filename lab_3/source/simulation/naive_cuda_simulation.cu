@@ -107,7 +107,13 @@ void calculate_velocities_kernel(std::uint32_t num_bodies, double2* d_forces, do
 }
 
 void NaiveCudaSimulation::calculate_velocities(Universe& universe, void* d_forces, void* d_weights, void* d_velocities){
+    int block_size = 512;
+    int grid_size = universe.num_bodies % block_size == 0 ? universe.num_bodies / block_size : (universe.num_bodies - (universe.num_bodies % block_size) + block_size) / block_size;
 
+    dim3 block_dim(block_size);
+    dim3 grid_dim(grid_size);
+
+    calculate_velocities_kernel<<<grid_dim, block_dim>>>(universe.num_bodies, (double2 *)d_forces, (double *)d_weights, (double2 *)d_velocities);
 }
 
 __global__
