@@ -96,7 +96,14 @@ void NaiveCudaSimulation::calculate_forces(Universe& universe, void* d_positions
 
 __global__
 void calculate_velocities_kernel(std::uint32_t num_bodies, double2* d_forces, double* d_weights, double2* d_velocities){
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= num_bodies) return;
 
+    double m = d_weights[i];
+    double2 force = d_forces[i];
+    double2 v0 = d_velocities[i];
+    double2 a = {force.x / m, force.y / m};
+    d_velocities[i] = {v0.x + a.x * epoch_in_seconds, v0.y + a.y * epoch_in_seconds};
 }
 
 void NaiveCudaSimulation::calculate_velocities(Universe& universe, void* d_forces, void* d_weights, void* d_velocities){
