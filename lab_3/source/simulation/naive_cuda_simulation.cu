@@ -118,7 +118,12 @@ void NaiveCudaSimulation::calculate_velocities(Universe& universe, void* d_force
 
 __global__
 void calculate_positions_kernel(std::uint32_t num_bodies, double2* d_velocities, double2* d_positions){
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= num_bodies) return;
 
+    double2 pos = d_positions[i];
+    double2 vel = d_velocities[i];
+    d_positions[i] = {pos.x + vel.x * constants:, pos.y + vel.y * epoch_in_seconds};
 }
 
 void NaiveCudaSimulation::calculate_positions(Universe& universe, void* d_velocities, void* d_positions){
