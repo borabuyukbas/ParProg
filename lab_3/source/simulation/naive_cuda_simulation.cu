@@ -127,7 +127,12 @@ void calculate_positions_kernel(std::uint32_t num_bodies, double2* d_velocities,
 }
 
 void NaiveCudaSimulation::calculate_positions(Universe& universe, void* d_velocities, void* d_positions){
+    int block_size = 512;
+    int grid_size = universe.num_bodies % block_size == 0 ? universe.num_bodies / block_size : (universe.num_bodies - (universe.num_bodies % block_size) + block_size) / block_size;
 
+    dim3 block_dim(block_size);
+    dim3 grid_dim(grid_size);
+    calculate_positions_kernel<<<grid_dim, block_dim>>>(universe.num_bodies, (double2 *)d_velocities, (double2 *)d_positions);
 }
 
 void NaiveCudaSimulation::simulate_epochs(Plotter& plotter, Universe& universe, std::uint32_t num_epochs, bool create_intermediate_plots, std::uint32_t plot_intermediate_epochs){
