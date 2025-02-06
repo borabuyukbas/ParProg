@@ -228,7 +228,7 @@ void compress_pixels_kernel(std::uint32_t num_raw_pixels, std::uint8_t* d_raw_pi
     // iterater over 8 pixels
     for (uint8_t i = 0; i < 8; i++)
     {
-        if (d_raw_pixels[idx * 8 + i] == 1)
+        if (d_raw_pixels[idx * 8 + i] != 0)
         {
             sum += pow(2, i);
         }
@@ -250,7 +250,7 @@ void NaiveCudaSimulation::compress_pixels(std::vector<std::uint8_t>& raw_pixels,
 
     // copy to device
     parprog_cudaMemcpy(d_raw_pixels, &raw_pixels, number_raw_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
-    parprog_cudaMemcpy(d_raw_pixels, &raw_pixels, number_comp_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
+    // parprog_cudaMemcpy(d_compressed_pixels, &raw_pixels, number_comp_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
 
     dim3 blockDim(number_comp_pixels, 1, 1);
     dim3 gridDim(1, 1);
