@@ -172,7 +172,7 @@ void NaiveCudaSimulation::simulate_epochs(Plotter& plotter, Universe& universe, 
         simulate_epoch(plotter, universe, create_intermediate_plots, plot_intermediate_epochs, d_weights, d_forces, d_velocities, d_positions);
     }
 
-    free_device_memory(d_weights, d_forces, d_velocities, d_positions);
+    free_device_memory(&d_weights, &d_forces, &d_velocities, &d_positions);
 }
 
 __global__
@@ -249,7 +249,7 @@ void NaiveCudaSimulation::compress_pixels(std::vector<std::uint8_t>& raw_pixels,
     size_t number_comp_pixels = compressed_pixels.size();
 
     int block_size = 512;
-    int grid_size = number_compressed_pixels % block_size == 0 ? number_compressed_pixels / block_size : (number_compressed_pixels - (number_compressed_pixels % block_size) + block_size) / block_size;
+    int grid_size = number_comp_pixels % block_size == 0 ? number_comp_pixels / block_size : (number_comp_pixels - (number_comp_pixels % block_size) + block_size) / block_size;
 
     parprog_cudaMalloc(&d_raw_pixels, number_raw_pixels * sizeof(uint8_t));
     parprog_cudaMalloc(&d_compressed_pixels, number_comp_pixels * sizeof(uint8_t));
