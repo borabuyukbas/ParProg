@@ -12,8 +12,11 @@
 #include "simulation/barnes_hut_simulation.h"
 #include "simulation/barnes_hut_simulation_with_collisions.h"
 
-#include "input_generator/input_generator.h"
+// CUDA stuff
 
+#include "simulation/vaive_cuda_simulation.cuh"
+
+#include "input_generator/input_generator.h"
 
 static void benchmark_get_bounding_box_sequential(benchmark::State& state){
 	const auto number_bodies = state.range(0);
@@ -27,7 +30,6 @@ static void benchmark_get_bounding_box_sequential(benchmark::State& state){
 		state.ResumeTiming();
 		uni.get_bounding_box();
 	}
-
 }
 
 static void benchmark_get_bounding_box_parallel(benchmark::State& state){
@@ -98,7 +100,7 @@ static void benchmark_barnes_hut(benchmark::State& state) {
 		InputGenerator::create_random_universe(number_bodies, uni);
 		// create dummy plotter
 		BoundingBox bb(-5, 5, -5, 5);
-		auto tmp_path = std::filesystem::path{"dummy_plot"};
+		auto tmp_path = std::filesystem::path{"barnes_hut/dummy_plot"};
 		Plotter plotter(bb, tmp_path, 400, 400);
 
 		state.ResumeTiming();
@@ -106,6 +108,27 @@ static void benchmark_barnes_hut(benchmark::State& state) {
 		//benchmark::DoNotOptimize(autStat.print());
 	}	
 }
+
+static void benchmark_naive_cuda(benchmark::State& state) {
+	const auto number_bodies = state.range(0);
+	const auto number_epochs = state.range(1);
+
+	for (auto _ : state) {
+		state.PauseTiming();
+		// initialize universe
+		Universe uni;
+		InputGenerator::create_random_universe(number_bodies, uni);
+		// create dummy plotter
+		BoundingBox bb(-5, 5, -5, 5);
+		auto tmp_path = std::filesystem::path{"naive_cuda/dummy_plot"};
+		Plotter plotter(bb, tmp_path, 400, 400);
+
+		state.ResumeTiming();
+		NaiveCudaSimulation::simulate_epochs(plotter, uni, number_epochs, false, 1);
+		//benchmark::DoNotOptimize(autStat.print());
+	}	
+}
+
 
 static void benchmark_barnes_hut_with_collisions(benchmark::State& state) {
 	const auto number_bodies = state.range(0);
@@ -198,13 +221,18 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-BENCHMARK(benchmark_get_bounding_box_sequential)->Unit(benchmark::kMillisecond)->Args({100000});
-BENCHMARK(benchmark_get_bounding_box_sequential)->Unit(benchmark::kMillisecond)->Args({10000000});
-BENCHMARK(benchmark_get_bounding_box_sequential)->Unit(benchmark::kMillisecond)->Args({100000000});
+// Barnes Hut 
 
-BENCHMARK(benchmark_get_bounding_box_parallel)->Unit(benchmark::kMillisecond)->Args({100000});
-BENCHMARK(benchmark_get_bounding_box_parallel)->Unit(benchmark::kMillisecond)->Args({10000000});
-BENCHMARK(benchmark_get_bounding_box_parallel)->Unit(benchmark::kMillisecond)->Args({100000000});
+BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({100000});
+BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({10000000});
+BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({100000000});
+
+// Naive CUDA
+
+BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({100000});
+BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({10000000});
+BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({100000000});
+
 /*
 BENCHMARK(benchmark_construct_quadtree)->Unit(benchmark::kMillisecond)->Args({10000, 0});
 BENCHMARK(benchmark_construct_quadtree)->Unit(benchmark::kMillisecond)->Args({20000, 0});
