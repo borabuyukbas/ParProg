@@ -4,6 +4,7 @@
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 #include "cuda_wrappers.cuh"
+#include "constants.h"
 
 std::vector<double2> vector_map_vector2d_to_double2(const std::vector<Vector2d<double>> vector) {
     std::vector<double2> returnVector (vector.size());
@@ -145,7 +146,7 @@ void calculate_positions_kernel(std::uint32_t num_bodies, double2* d_velocities,
 
     double2 pos = d_positions[i];
     double2 vel = d_velocities[i];
-    d_positions[i] = {pos.x + vel.x * constants:, pos.y + vel.y * epoch_in_seconds};
+    d_positions[i] = {pos.x + vel.x * epoch_in_seconds, pos.y + vel.y * epoch_in_seconds};
 }
 
 void NaiveCudaSimulation::calculate_positions(Universe& universe, void* d_velocities, void* d_positions){
@@ -187,7 +188,7 @@ void get_pixels_kernel(std::uint32_t num_bodies, double2* d_positions, std::uint
 
         // write to 1 to corresponding pixel
 
-        d_pixels[pixel_y * plot_width + pixel_x];
+        d_pixels[pixel_y * plot_width + pixel_x] = 1;
     }
     // just keep the zero
 }
@@ -245,7 +246,7 @@ void NaiveCudaSimulation::compress_pixels(std::vector<std::uint8_t>& raw_pixels,
     uint8_t number_comp_pixels = compressed_pixels.size();
 
     parprog_cudaMalloc(&d_raw_pixels, number_raw_pixels * sizeof(uint8_t));
-    parprog_cudaMalloc(&d_raw_pixels, number_comp_pixels * sizeof(uint8_t));
+    parprog_cudaMalloc(&d_compressed_pixels, number_comp_pixels * sizeof(uint8_t));
 
     // copy to device
     parprog_cudaMemcpy(d_raw_pixels, &raw_pixels, number_raw_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
@@ -255,7 +256,7 @@ void NaiveCudaSimulation::compress_pixels(std::vector<std::uint8_t>& raw_pixels,
     dim3 gridDim(1, 1);
 
     // call kernel
-    compress_pixels_kernel(number_raw_pixels, reinterpret_cast<uint8_t*>(d_raw_pixels), reinterpret_cast<uint8_t*>(d_compressed_pixels));
+    compress_pixels_kernel<<<gridDim, blockDim>>>(number_raw_pixels, reinterpret_cast<uint8_t*>(d_raw_pixels), reinterpret_cast<uint8_t*>(d_compressed_pixels));
 
     // copy back to host
     parprog_cudaMemcpy(&compressed_pixels, d_compressed_pixels, number_comp_pixels * sizeof(uint8_t), cudaMemcpyDeviceToHost);
