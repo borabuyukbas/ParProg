@@ -1,7 +1,7 @@
 #pragma once
 
-#define AUTHORS_A "Lukas Rothenberger"
-#define AUTHORS_B ""
+#define AUTHORS_A "Philip Seitz"
+#define AUTHORS_B "Philip Seitz"
 #define AUTHORS_C "Bora Büyükbas"
 #define AUTHORS_D "Bora Büyükbas"
 #define AUTHORS_E "Bora Büyükbas"
@@ -10,7 +10,7 @@
 #define AUTHORS_H "Fares Elkholy"
 #define AUTHORS_I "Fares Elkholy"
 #define AUTHORS_J "Fares Elkholy"
-#define AUTHORS_K ""
-#define AUTHORS_L ""
-#define AUTHORS_M ""
-#define AUTHORS_N ""
+#define AUTHORS_K "Philip Seitz"
+#define AUTHORS_L "Philip Seitz"
+#define AUTHORS_M "Philip Seitz"
+#define AUTHORS_N "Philip Seitz"
