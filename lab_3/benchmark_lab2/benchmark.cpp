@@ -14,7 +14,7 @@
 
 // CUDA stuff
 
-#include "simulation/vaive_cuda_simulation.cuh"
+#include "simulation/naive_cuda_simulation.cuh"
 
 #include "input_generator/input_generator.h"
 
