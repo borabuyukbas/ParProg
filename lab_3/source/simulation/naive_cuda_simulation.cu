@@ -172,7 +172,7 @@ void NaiveCudaSimulation::simulate_epochs(Plotter& plotter, Universe& universe, 
         simulate_epoch(plotter, universe, create_intermediate_plots, plot_intermediate_epochs, d_weights, d_forces, d_velocities, d_positions);
     }
 
-    free_device_memory(&d_weights, &d_forces, &d_velocities, &d_positions);
+    free_device_memory(d_weights, d_forces, d_velocities, d_positions);
 }
 
 __global__
@@ -181,14 +181,14 @@ void get_pixels_kernel(std::uint32_t num_bodies, double2* d_positions, std::uint
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
     // check if within bounding box
-    if (d_positions[idx].x >= plot_bounding_box_x_min && d_positions[idx].x <= plot_bounding_box_y_max && d_positions[idx].y >= plot_bounding_box_y_min && d_positions[idx].y <= plot_bounding_box_y_max)
+    if (d_positions[idx].x >= plot_bounding_box_x_min && d_positions[idx].x <= plot_bounding_box_x_max && d_positions[idx].y >= plot_bounding_box_y_min && d_positions[idx].y <= plot_bounding_box_y_max)
     {
         int pixel_x = (d_positions[idx].x - plot_bounding_box_x_min) / (plot_bounding_box_x_max - plot_bounding_box_x_min) * (plot_width - 1);
         int pixel_y = (d_positions[idx].y - plot_bounding_box_y_min) / (plot_bounding_box_y_max - plot_bounding_box_y_min) * (plot_height - 1);
 
-        // write to 1 to corresponding pixel
+        // write to 255 to corresponding pixel
 
-        d_pixels[pixel_y * plot_width + pixel_x] = 1;
+        d_pixels[pixel_y * plot_width + pixel_x] = 255;
     }
     // just keep the zero
 }
@@ -210,10 +210,10 @@ std::vector<std::uint8_t> NaiveCudaSimulation::get_pixels(std::uint32_t plot_wid
         plot_width, plot_height, plot_bounding_box.x_min, plot_bounding_box.x_max, plot_bounding_box.y_min, plot_bounding_box.y_max);
 
     // copy back from device
-    parprog_cudaMemcpy(&pixels, &d_pixels, plot_width * plot_height * sizeof(uint8_t), cudaMemcpyDeviceToHost);
+    parprog_cudaMemcpy(pixels.data(), &d_pixels, plot_width * plot_height * sizeof(uint8_t), cudaMemcpyDeviceToHost);
 
     // free memory
-    parprog_cudaFree(&d_pixels);
+    parprog_cudaFree(d_pixels);
 
     return pixels;
 }
@@ -225,12 +225,14 @@ void compress_pixels_kernel(std::uint32_t num_raw_pixels, std::uint8_t* d_raw_pi
 
     // for every compressed pixel
     uint8_t sum = 0;
-    // iterater over 8 pixels
+    // iterate over 8 pixels
     for (uint8_t i = 0; i < 8; i++)
     {
+        if (idx * 8 + i >= num_raw_pixels)
+            break;
         if (d_raw_pixels[idx * 8 + i] != 0)
         {
-            sum += pow(2, i);
+            sum += (1 << i);
         }
     }
 
@@ -238,32 +240,36 @@ void compress_pixels_kernel(std::uint32_t num_raw_pixels, std::uint8_t* d_raw_pi
 }
 
 void NaiveCudaSimulation::compress_pixels(std::vector<std::uint8_t>& raw_pixels, std::vector<std::uint8_t>& compressed_pixels){
+    
     // allocate memory
     void* d_raw_pixels;
     void* d_compressed_pixels;
 
-    uint8_t number_raw_pixels = raw_pixels.size();
-    uint8_t number_comp_pixels = compressed_pixels.size();
+    size_t number_raw_pixels = raw_pixels.size();
+    size_t number_comp_pixels = compressed_pixels.size();
+
+    int block_size = 512;
+    int grid_size = number_compressed_pixels % block_size == 0 ? number_compressed_pixels / block_size : (number_compressed_pixels - (number_compressed_pixels % block_size) + block_size) / block_size;
 
     parprog_cudaMalloc(&d_raw_pixels, number_raw_pixels * sizeof(uint8_t));
     parprog_cudaMalloc(&d_compressed_pixels, number_comp_pixels * sizeof(uint8_t));
 
     // copy to device
-    parprog_cudaMemcpy(d_raw_pixels, &raw_pixels, number_raw_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
+    parprog_cudaMemcpy(d_raw_pixels, raw_pixels.data(), number_raw_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
     // parprog_cudaMemcpy(d_compressed_pixels, &raw_pixels, number_comp_pixels * sizeof(uint8_t), cudaMemcpyHostToDevice);
 
-    dim3 blockDim(number_comp_pixels, 1, 1);
-    dim3 gridDim(1, 1);
+    dim3 blockDim(block_size);
+    dim3 gridDim(grid_size);
 
     // call kernel
     compress_pixels_kernel<<<gridDim, blockDim>>>(number_raw_pixels, reinterpret_cast<uint8_t*>(d_raw_pixels), reinterpret_cast<uint8_t*>(d_compressed_pixels));
 
     // copy back to host
-    parprog_cudaMemcpy(&compressed_pixels, d_compressed_pixels, number_comp_pixels * sizeof(uint8_t), cudaMemcpyDeviceToHost);
+    parprog_cudaMemcpy(compressed_pixels.data(), d_compressed_pixels, number_comp_pixels * sizeof(uint8_t), cudaMemcpyDeviceToHost);
 
     // free memory
-    parprog_cudaFree(&d_raw_pixels);
-    parprog_cudaFree(&d_compressed_pixels);
+    parprog_cudaFree(d_raw_pixels);
+    parprog_cudaFree(d_compressed_pixels);
 }
 
 void NaiveCudaSimulation::simulate_epoch(Plotter& plotter, Universe& universe, bool create_intermediate_plots, std::uint32_t plot_intermediate_epochs, void* d_weights, void* d_forces, void* d_velocities, void* d_positions){
