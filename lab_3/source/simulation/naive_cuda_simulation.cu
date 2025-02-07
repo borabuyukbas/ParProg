@@ -205,7 +205,7 @@ std::vector<std::uint8_t> NaiveCudaSimulation::get_pixels(std::uint32_t plot_wid
     // call get_pixels_kernel (write either 1 or zero)
 
     int block_size = 512;
-    int grid_size = universe.num_bodies % block_size == 0 ? universe.num_bodies / block_size : (universe.num_bodies - (universe.num_bodies % block_size) + block_size) / block_size;
+    int grid_size = num_bodies % block_size == 0 ? num_bodies / block_size : (num_bodies - (num_bodies % block_size) + block_size) / block_size;
 
     dim3 blockDim(block_size);
     dim3 gridDim(grid_size);
