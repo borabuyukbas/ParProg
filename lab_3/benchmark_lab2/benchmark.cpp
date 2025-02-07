@@ -223,15 +223,15 @@ int main(int argc, char** argv) {
 
 // Barnes Hut 
 
-BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({100000});
-BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({10000000});
-BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({100000000});
+BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({100000, 1});
+BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({10000000, 1});
+BENCHMARK(benchmark_barnes_hut)->Unit(benchmark::kMillisecond)->Args({100000000, 1});
 
 // Naive CUDA
 
-BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({100000});
-BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({10000000});
-BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({100000000});
+BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({100000, 1});
+BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({10000000, 1});
+BENCHMARK(benchmark_naive_cuda)->Unit(benchmark::kMillisecond)->Args({100000000, 1});
 
 /*
 BENCHMARK(benchmark_construct_quadtree)->Unit(benchmark::kMillisecond)->Args({10000, 0});
