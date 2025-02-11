@@ -83,6 +83,9 @@ void NaiveCudaSimulation::copy_data_from_device(Universe& universe, void* d_weig
 
 __global__
 void calculate_forces_kernel(std::uint32_t num_bodies, double2* d_positions, double* d_weights, double2* d_forces){
+    __shared__ double2 shared_positions[512];
+    __shared__ double shared_weights[512];
+
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= num_bodies) return;
 
@@ -90,19 +93,27 @@ void calculate_forces_kernel(std::uint32_t num_bodies, double2* d_positions, dou
     double i_weight = d_weights[i];
 
     double2 total_force {0, 0};
-    for (int j = 0; j < num_bodies; ++j) {
-        if (j == i) continue;
+    for (int tile = 0; tile < (num_bodies + blockDim.x - 1) / blockDim.x; ++tile) {
+        int j = tile * blockDim.x + threadIdx.x;
 
-        double2 j_position = d_positions[j];
-        double j_weight = d_weights[j];
-        double2 direction {j_position.x - i_position.x, j_position.y - i_position.y};
+        if (j < num_bodies) {
+            shared_positions[threadIdx.x] = d_positions[j];
+            shared_weights[threadIdx.x] = d_weights[j];
+        }
+        __syncthreads();
 
-        double distance = sqrt(pow(direction.x, 2) + pow(direction.y, 2));
-        double force = gravitational_constant * ((i_weight * j_weight)/(pow(distance, 2)));
-        double unit_vector_force = force / distance;
-
-        total_force.x += direction.x * unit_vector_force;
-        total_force.y += direction.y * unit_vector_force;
+        for (int k = 0; k < blockDim.x; ++k) {
+            int j_idx = tile * blockDim.x + k;
+            if (j_idx < num_bodies && i != j_idx) {
+                double2 direction {shared_positions[k].x - i_position.x, shared_positions[k].y - i_position.y};
+                double distance = sqrt(direction.x * direction.x + direction.y * direction.y);
+                double force_magnitude = gravitational_constant * ((i_weight * shared_weights[k])/(distance * distance));
+                double unit_vector_force = force_magnitude / distance;
+                total_force.x += direction.x * unit_vector_force;
+                total_force.y += direction.y * unit_vector_force;
+            }
+        }
+        __syncthreads();
     }
 
     d_forces[i] = total_force;
