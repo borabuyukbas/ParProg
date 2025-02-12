@@ -40,7 +40,7 @@
 
 Für die Performance Analyse unserer Implementierung der naiven CUDA-Simulation soll mit der CPU-parallelen
 Barnes-Hut Implementierung ein Performance-Vergleich durchgeführt werden. Die Zusammenstellung der Benchmark-
-Ergebnisse, bei der die Laufzeit jeweils für verschiedene Körperanzahlen durchgeführt wurde, ist folgender 
+Ergebnisse, bei der die Laufzeit jeweils für verschiedene Körperanzahlen durchgeführt wurde, ist folgender
 Grafik zu entnehmen.
 
 \begin{tikzpicture}
@@ -57,8 +57,8 @@ Grafik zu entnehmen.
       % ytick={0,20,40,60,80,100,120},
       % ymin=-3, ymax=20,
       % ytick={0, 5, 10, 15, 20},
-      restrict y to domain=5:18,
-      ymin=5, ymax=18,
+      % restrict y to domain=5:18,
+      % ymin=5, ymax=18,
       scaled ticks=false,
       % tick label style={/pgf/number format/fixed},
       legend pos=north west,
@@ -92,16 +92,16 @@ Grafik zu entnehmen.
 \end{tikzpicture}
 
 Es lässt sich festhalten, dass die CPU parellele Implementierung bei höherer Körperanzahl (ab 100000 Körpern) deutlich geringere
-Laufzeit hat. Bei geringerer Körperanzahl schneidet die CUDA Implementierung jedoch besser ab. Das lässt sich damit begründen, dass 
-die Barnes-Hut Simulation Overhead bezüglich Erstellung des Quadtrees mit sich bringt. Für geringe Anzahlen an Körpern ist diese 
-natürlich auffällig. 
+Laufzeit hat. Bei geringerer Körperanzahl schneidet die CUDA Implementierung jedoch besser ab. Das lässt sich damit begründen, dass
+die Barnes-Hut Simulation Overhead bezüglich Erstellung des Quadtrees mit sich bringt. Für geringe Anzahlen an Körpern ist diese
+natürlich auffällig.
 
 Während der Entwicklung der CUDA Simulation wurde die Feststellung gemacht, dass die Berechnung der Kräfte den größten Laufzeitanteil der Simulation ausmacht.
 
-Für eine hohe Anzahl an Körpern ist somit der Laufzeit-Unterschied der beiden Simulationen auf die Algorithmen zurückzuführen. Während bei 
-Barnes-Hut effiezient die relevanten Körper für die Berechnung der Kräfte ausgewählt werden, berechnet die CUDA-Simulation Kräfte für alle 
-Körper (in unserer Implementierung mit Tiling, um effizienteres Speicherverhalten zu erzielen), was trotz Parallelisierung nicht mit dem 
-Barnes-Hut Algorithmus konkurieren kann. 
+Für eine hohe Anzahl an Körpern ist somit der Laufzeit-Unterschied der beiden Simulationen auf die Algorithmen zurückzuführen. Während bei
+Barnes-Hut effiezient die relevanten Körper für die Berechnung der Kräfte ausgewählt werden, berechnet die CUDA-Simulation Kräfte für alle
+Körper (in unserer Implementierung mit Tiling, um effizienteres Speicherverhalten zu erzielen), was trotz Parallelisierung nicht mit dem
+Barnes-Hut Algorithmus konkurieren kann.
 
 
 \end{document}
