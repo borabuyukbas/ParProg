@@ -6,12 +6,11 @@ A high-performance astronomical simulation capable of simulating over **1 millio
 
 *   **Massive Scale**: Simulates 1,000,000+ astronomical objects.
 *   **Utilizes**:
-    *   **GPU Acceleration**: Custom CUDA kernels for massive parallelism.
-    *   **CPU Parallelism**: OpenMP for multi-threaded execution.
-    *   **Algorithmic Optimization**: Barnes-Hut tree algorithm for efficient force calculation.
-*   **Visualization**: Generates high-resolution video visualizations of the universe evolution.
+    *  Custom [CUDA](https://developer.nvidia.com/cuda) kernels for GPU parallelism.
+    *  [OpenMP](https://www.openmp.org/) for multi-threaded execution (CPU Parallelism).
+    *  [Barnes-Hut tree algorithm](https://en.wikipedia.org/wiki/Barnes%E2%80%93Hut_simulation) for efficient force calculation.
+*  Generates high-resolution video visualizations of the universe evolution.
 *  Built with C++20.
-
 
 ## Quick Start
 
