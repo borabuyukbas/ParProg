@@ -1,6 +1,6 @@
 # High-Performance N-Body Simulation
 
-A high-performance astronomical simulation capable of simulating over **1 million bodies** in real-time. This project leverages **CUDA** for GPU acceleration and **OpenMP** for multi-core CPU processing, implementing the efficient **Barnes-Hut algorithm** ($O(n \log n)$) to handle massive scale interactions.
+A high-performance astronomical simulation capable of simulating over **1 million bodies** in real-time. This project leverages **CUDA** for GPU acceleration and **OpenMP** for multi-core CPU processing, implementing the efficient **Barnes-Hut algorithm** (O(n log n)) to handle massive scale interactions.
 
 ## Key Features
 
